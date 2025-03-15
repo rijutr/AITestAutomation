@@ -1,2 +1,2 @@
 # AITestAutomation
-A AI Test Automation using browser use and playwright
+AI Test Automation using browser use and playwright
