@@ -6,11 +6,15 @@ from browser_use.agent.views import ActionResult
 from browser_use.browser.context import BrowserContext
 from browser_use.controller.service import Controller
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from pydantic import SecretStr, BaseModel
 
 class ProductDetails(BaseModel):
-    search_result: str
-    product_description: str
+    product_name: str
+    product_price: str
+    product_ram_size: str
+    product_memory_size: str
 
 controller = Controller(output_model=ProductDetails)
 
@@ -24,18 +28,18 @@ async def get_attrib_url(browser: BrowserContext):
 
 async def test_validation():
     task = """
-        I am an Automation Engineer performing automation tasks.
-        1. Open https://rahulshettyacademy.com/loginpagePractise/ and maximize the browser window.
-        2. Get the username and password from the webpage.
-        3. Enter the username and password.
-        4. Click on the login button.
-        5. Get the search result of the first product.
-        6. Get attribute and URL of the page.
-        7. Get the product description of the first product.
+        1. Open the browser and go to the website "https://www.amazon.in/"
+        2. Search for "iPhone 16"
+        3. Get the product with product name "iPhone 16" (strictly match the name)
+        4. Get the product details like product name, price, RAM size, and memory size from the product page
         """
-
+    # Using Gemini GenAI
     api_key = os.environ["GEMINI_API_KEY"]
-    llm = ChatGoogleGenerativeAI(model='gemini-2.0-pro-exp-02-05', api_key=SecretStr(api_key))
+    llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash', api_key=SecretStr(api_key))
+    # Using DeepSeek V1
+    # api_key = os.environ["DEEPSEEK_API_KEY"]
+    # llm = ChatOpenAI(base_url='https://api.deepseek.com/v1', model='deepseek-chat', api_key=SecretStr(api_key))
+    # llm = ChatOllama(model='qwen2.5:latest',num_ctx=128000,)
     agent = Agent(task, llm=llm, controller=controller, use_vision=True)
     history = await agent.run()
     history.save_to_file('result.json')

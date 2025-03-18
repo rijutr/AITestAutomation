@@ -40,7 +40,12 @@ This project automates browser interactions and validations using AI and Playwri
     pip install -r requirements.txt
     ```
 
-4. Set up environment variables:
+4. Install Playwright
+    ```sh
+    playwright install
+    ```
+
+5. Set up environment variables:
     Create a `.env` file in the project root with the following content:
     ```dotenv
     GEMINI_API_KEY=your_gemini_api_key
